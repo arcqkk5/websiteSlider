@@ -4890,6 +4890,11 @@ window.addEventListener("DOMContentLoaded", function () {
     container: ".page"
   });
   slider.render();
+  var modulePageSlider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    container: ".moduleapp",
+    btns: ".next"
+  });
+  modulePageSlider.render();
   var showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
     container: ".showup__content-slider",
     prev: ".showup__prev",
@@ -4950,10 +4955,13 @@ function () {
 
     this.oldOfficer = document.querySelector(oldOfficer);
     this.newOfficer = document.querySelector(newOfficer);
-    this.oldItems = this.oldOfficer.querySelectorAll(items);
-    this.newItems = this.newOfficer.querySelectorAll(items);
-    this.oldCounter = 0;
-    this.newCounter = 0;
+
+    try {
+      this.oldItems = this.oldOfficer.querySelectorAll(items);
+      this.newItems = this.newOfficer.querySelectorAll(items);
+      this.oldCounter = 0;
+      this.newCounter = 0;
+    } catch (e) {}
   }
 
   _createClass(Difference, [{
@@ -4981,10 +4989,12 @@ function () {
   }, {
     key: "init",
     value: function init() {
-      this.hideItems(this.oldItems);
-      this.hideItems(this.newItems);
-      this.bindTriggers(this.oldOfficer, this.oldItems, this.oldCounter);
-      this.bindTriggers(this.newOfficer, this.newItems, this.newCounter);
+      try {
+        this.hideItems(this.oldItems);
+        this.hideItems(this.newItems);
+        this.bindTriggers(this.oldOfficer, this.oldItems, this.oldCounter);
+        this.bindTriggers(this.newOfficer, this.newItems, this.newCounter);
+      } catch (e) {}
     }
   }]);
 
@@ -5099,30 +5109,32 @@ function () {
     value: function init() {
       var _this = this;
 
-      this.checkMailInputs();
-      this.form.forEach(function (item) {
-        item.addEventListener("submit", function (e) {
-          e.preventDefault();
-          var statusMessage = document.createElement("div");
-          statusMessage.style.cssText = "\n            margin-top: 15px;\n            font-size: 18px;\n            color: grey;\n          ";
-          item.parentNode.appendChild(statusMessage);
-          statusMessage.textContent = _this.message.loading;
-          var formData = new FormData(item);
+      try {
+        this.checkMailInputs();
+        this.form.forEach(function (item) {
+          item.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var statusMessage = document.createElement("div");
+            statusMessage.style.cssText = "\n              margin-top: 15px;\n              font-size: 18px;\n              color: grey;\n            ";
+            item.parentNode.appendChild(statusMessage);
+            statusMessage.textContent = _this.message.loading;
+            var formData = new FormData(item);
 
-          _this.postData(_this.path, formData).then(function (res) {
-            console.log(res);
-            statusMessage.textContent = _this.message.success;
-          }).catch(function () {
-            statusMessage.textContent = _this.message.failure;
-          }).finally(function () {
-            _this.clearInputs();
+            _this.postData(_this.path, formData).then(function (res) {
+              console.log(res);
+              statusMessage.textContent = _this.message.success;
+            }).catch(function () {
+              statusMessage.textContent = _this.message.failure;
+            }).finally(function () {
+              _this.clearInputs();
 
-            setTimeout(function () {
-              statusMessage.remove();
-            }, 6000);
+              setTimeout(function () {
+                statusMessage.remove();
+              }, 6000);
+            });
           });
         });
-      });
+      } catch (e) {}
     }
   }]);
 
@@ -5333,22 +5345,36 @@ function (_Slider) {
     value: function render() {
       var _this2 = this;
 
-      try {
-        this.hanson = document.querySelector(".hanson");
-      } catch (e) {}
+      if (this.container) {
+        try {
+          this.hanson = document.querySelector(".hanson");
+        } catch (e) {}
 
-      this.btns.forEach(function (item) {
-        item.addEventListener("click", function () {
-          _this2.plusSlides(1);
-        });
-        item.parentNode.previousElementSibling.addEventListener("click", function (e) {
-          e.preventDefault();
-          _this2.slideIndex = 1;
+        this.btns.forEach(function (item) {
+          item.addEventListener("click", function () {
+            _this2.plusSlides(1);
+          });
+          item.parentNode.previousElementSibling.addEventListener("click", function (e) {
+            e.preventDefault();
+            _this2.slideIndex = 1;
 
-          _this2.showSlides(_this2.slideIndex);
+            _this2.showSlides(_this2.slideIndex);
+          });
         });
-      });
-      this.showSlides(this.slideIndex);
+        this.showSlides(this.slideIndex);
+        document.querySelectorAll(".prevmodule").forEach(function (item) {
+          item.addEventListener("click", function () {
+            _this2.plusSlides(-1);
+          });
+        });
+        document.querySelectorAll(".nextmodule").forEach(function (item) {
+          item.addEventListener("click", function (e) {
+            e.stopPropagation();
+
+            _this2.plusSlides(1);
+          });
+        });
+      }
     }
   }]);
 
@@ -5498,15 +5524,17 @@ function (_Slider) {
     value: function init() {
       var _this3 = this;
 
-      this.container.style.cssText = "\n      display: flex;\n      flex-wrap: wrap;\n      overflow: hidden;\n      align-items: flex-start;\n    ";
-      this.bindTriggers();
-      this.decorizeSlides();
+      try {
+        this.container.style.cssText = "\n      display: flex;\n      flex-wrap: wrap;\n      overflow: hidden;\n      align-items: flex-start;\n      ";
+        this.bindTriggers();
+        this.decorizeSlides();
 
-      if (this.autoplay) {
-        setInterval(function () {
-          return _this3.nextSlide();
-        }, 5000);
-      }
+        if (this.autoplay) {
+          setInterval(function () {
+            return _this3.nextSlide();
+          }, 5000);
+        }
+      } catch (e) {}
     }
   }]);
 
@@ -5547,7 +5575,11 @@ var Slider = function Slider() {
   _classCallCheck(this, Slider);
 
   this.container = document.querySelector(container);
-  this.slides = this.container.children;
+
+  try {
+    this.slides = this.container.children;
+  } catch (e) {}
+
   this.btns = document.querySelectorAll(btns);
   this.prev = document.querySelector(prev);
   this.next = document.querySelector(next);
